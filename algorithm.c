@@ -13,10 +13,10 @@ static void swap(int* value_1, int* value_2)
 }
 
 //Using the Hoare's partition scheme because O(n) instead of O(n²) time complexity.
-//Low is the starting index
-//High is the ending index
-static int partition(int *a,int low, int high)
+static int partition(int *a, int size)
 {
+    int low = 0;
+    int high = size - 1;
     int pivot = a[low];
     int left_index = low - 1;
     int right_index = high + 1;
@@ -44,6 +44,7 @@ static int partition(int *a,int low, int high)
 void bubble_sort(int *a, int n)
 {
     int buff;
+
 	for (size_t i = 0; i < n - 1; i++)
 	{
 	   for (size_t j = 0; j < n - i - 1; j++)
@@ -73,21 +74,44 @@ void insertion_sort(int *a, int n)
 
         a[index + 1] = compare_value;
     }
+
+    return;
 }
 
 void quick_sort(int *a, int n)
 {
-    int pivot_index = partition(a, 0, n - 1);
-    quick_sort(a, pivot_index - 1);
-    quick_sort(a + pivot_index + 1, n - 1);
+    if(n > 1)
+    {
+        int pivot_index = partition(a, n);
+        quick_sort(a, pivot_index);
+        quick_sort(a + pivot_index + 1, n - pivot_index- 1);
+    }
+
+    return;
 }
 
 bool linear_search(const int *a, int n, int v)
 {
-	return false; // TODO: linear search
+    for(int i = 0; i < n; i++)
+    {
+        if(a[i] == v)
+            return true;
+    }
+
+	return false; 
 }
 
 bool binary_search(const int *a, int n, int v)
 {
-	return false; // TODO: binary search
+    if(n == 0)
+        return false;
+
+    int half_index = n / 2;
+
+    if(a[half_index]== v)
+        return true;
+    else if(a[half_index] > v)
+        return binary_search(a, half_index, v);     //search the left half
+    else
+        return binary_search(a + (half_index + 1), n - half_index - 1, v);    //search the right half
 }
