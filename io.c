@@ -9,8 +9,7 @@ static void empty_stream()
 {
 	int c;
 
-	while ((c = getchar()) != EOF && c != '\n')
-		;
+	while ((c = getchar()) != EOF && c != '\n');
 }
 
 //
