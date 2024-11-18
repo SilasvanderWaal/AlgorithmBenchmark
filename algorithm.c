@@ -44,7 +44,6 @@ static int partition(int *a, int size)
 void bubble_sort(int *a, int n)
 {
     int buff;
-
 	for (size_t i = 0; i < n - 1; i++)
 	{
 	   for (size_t j = 0; j < n - i - 1; j++)
@@ -83,8 +82,8 @@ void quick_sort(int *a, int n)
     if(n > 1)
     {
         int pivot_index = partition(a, n);
-        quick_sort(a, pivot_index);
-        quick_sort(a + pivot_index + 1, n - pivot_index- 1);
+        quick_sort(a, pivot_index + 1); //Left side from zero to and with pivot
+        quick_sort(a + pivot_index + 1, n - (pivot_index + 1)); //Right side from index after previous pivot
     }
 
     return;
@@ -98,7 +97,7 @@ bool linear_search(const int *a, int n, int v)
             return true;
     }
 
-	return false; 
+	return false;
 }
 
 bool binary_search(const int *a, int n, int v)
@@ -113,5 +112,5 @@ bool binary_search(const int *a, int n, int v)
     else if(a[half_index] > v)
         return binary_search(a, half_index, v);     //search the left half
     else
-        return binary_search(a + (half_index + 1), n - half_index - 1, v);    //search the right half
+        return binary_search(a + (half_index + 1),n - half_index - 1, v);    //search the right half
 }

@@ -1,13 +1,13 @@
 .PHONY: clean tidy
 
 CC=gcc
-CFLAGS=-Wall -Werror -std=c99 
+CFLAGS=-Wall -Werror -std=gnu99 -g
 LFLAGS=-lm
 HDR=$(wildcard *.h)
 SRC=$(filter-out $(wildcard *_test.c), $(wildcard *.c))
 OBJ=$(SRC:.c=.o)
 
-CFLAGS_TEST=$(CFLAGS) 
+CFLAGS_TEST=$(CFLAGS)
 LFLAGS_TEST=$(LFLAGS) -lcheck -lm -lpthread -lrt -lsubunit
 SRC_TEST=$(filter-out main.c, $(wildcard *.c))
 OBJ_TEST=$(SRC_TEST:.c=.o)

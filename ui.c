@@ -8,6 +8,25 @@
 //
 // Private
 //
+
+static void ui_print_results(result_t results[RESULT_ROWS]){
+    for (int i = 0; i < MENU_WIDTH; i++) {
+        printf("-");
+    }
+    printf("\n");
+
+    for (int i = 0; i < RESULT_ROWS; i++) {
+        printf("%5d  %3e\n", (i+1) * SIZE_START, results[i].time);
+    }
+
+    printf("\n");
+
+    for (int i = 0; i < MENU_WIDTH; i++) {
+        printf("-");
+    }
+    printf("\n");
+}
+
 static void ui_invalid_input()
 {
 	printf("info> bad input\n");
@@ -77,7 +96,7 @@ void ui_run()
 {
 	bool running, show_menu;
 	result_t result[RESULT_ROWS];
-	
+
 	show_menu = true;
 	running = true;
 	while (running) {
@@ -96,52 +115,66 @@ void ui_run()
 			// Bubble sort
 			case 'c':
 				benchmark(bubble_sort_t, best_t, result, RESULT_ROWS);
-				printf("todo> implemenet BE + present results in FE\n");
+				ui_print_results(result);
 				break;
 			case 'd':
 				benchmark(bubble_sort_t, worst_t, result, RESULT_ROWS);
+				ui_print_results(result);
 				break;
 
 			case 'e':
 				benchmark(bubble_sort_t, average_t, result, RESULT_ROWS);
+				ui_print_results(result);
 				break;
 
 			case 'f':
 				benchmark(insertion_sort_t, best_t, result, RESULT_ROWS);
+				ui_print_results(result);
 				break;
 
 			case 'g':
 				benchmark(insertion_sort_t, worst_t, result, RESULT_ROWS);
+				ui_print_results(result);
 				break;
 			case 'h':
 				benchmark(insertion_sort_t, average_t, result, RESULT_ROWS);
+				ui_print_results(result);
 				break;
 			case 'i':
 				benchmark(quick_sort_t, best_t, result, RESULT_ROWS);
+				ui_print_results(result);
 				break;
 			case 'j':
 				benchmark(quick_sort_t, worst_t, result, RESULT_ROWS);
+				ui_print_results(result);
 				break;
 			case 'k':
 				benchmark(quick_sort_t, average_t, result, RESULT_ROWS);
+				ui_print_results(result);
 				break;
 			case 'l':
 				benchmark(linear_search_t, best_t, result, RESULT_ROWS);
+				ui_print_results(result);
 				break;
 			case 'm':
 				benchmark(linear_search_t, worst_t, result, RESULT_ROWS);
+				ui_print_results(result);
 				break;
 			case 'n':
 				benchmark(linear_search_t, average_t, result, RESULT_ROWS);
+				ui_print_results(result);
 				break;
 			case 'o':
 				benchmark(binary_search_t, best_t, result, RESULT_ROWS);
+				ui_print_results(result);
 				break;
 			case 'p':
 				benchmark(binary_search_t, worst_t, result, RESULT_ROWS);
+				ui_print_results(result);
 				break;
 			case 'q':
 				benchmark(binary_search_t, average_t, result, RESULT_ROWS);
+				ui_print_results(result);
 				break;
 			// Invalid input
 			default:

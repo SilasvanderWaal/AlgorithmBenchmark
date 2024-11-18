@@ -3,6 +3,10 @@
 
 #define SIZE_START 512
 #define ITERATIONS 4
+#define MAX_SIZE 16384
+#define SEARCH_VALUE 1337
+
+#include <stdbool.h>
 
 // algorithm_t defines different algorithms
 typedef enum {
@@ -25,6 +29,15 @@ typedef struct {
 	int size;
 	double time;
 } result_t;
+
+typedef struct{
+    void (*sort_function_pointer)(int*, int);
+    bool (*search_function_pointer)(const int*, int, int);
+    int* array;
+    int size;
+    bool is_search_algorithm;
+    int search_number;
+} function_call_info;
 
 // benchmark benchmarks an algorithm a for a specific case c, writing n results
 // to the result buffer buf
