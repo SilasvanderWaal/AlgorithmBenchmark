@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 //
 // Private
@@ -27,15 +28,14 @@ static void ui_print_results(result_t results[RESULT_ROWS], char menu_option[]){
 
     printf("\n");
     printf("%5s \t", "size");
-    printf("%9s \t", "time T(s)");
-    printf("%5s \t", "T/logn");
-    printf("%5s \t", "T/n");
-    printf("%5s \t\n", "T/nlog");
+    printf("%10s \t", "time T(s)");
+    printf("%10s \t", "T/logn");
+    printf("%10s \t", "T/n");
+    printf("%10s \t\n", "T/nlog");
 
     for (int i = 0; i < RESULT_ROWS; i++) {
-
         double time_seconds = results[i].time;
-        printf("%5d \t %.9lf\n", size, time_seconds);
+        printf("%5d \t %.9lf \t %9e \t %9e \t %9e\n", size, time_seconds, log2(size) , time_seconds / size , size * log2(size));
         size *= 2;
     }
 

@@ -11,7 +11,6 @@
 //
 static void random_array(function_call_info* function_info)
 {
-    srand(time(NULL));
     for (int i = 0; i < function_info->size; i++) {
         function_info->array[i] = (rand() % function_info->size);
     }
@@ -44,11 +43,18 @@ static void create_array(function_call_info* function_info)
         function_info->search_value = -1;
         break;
     case average_t:
-        random_array(function_info);
-        function_info->search_value = SEARCH_VALUE;
+        int random_index = rand() % function_info->size;
+
+        if(function_info->algorithm_type == binary_search_t)
+            sorted_ascending(function_info);
+        else
+            random_array(function_info);
+
+        function_info->search_value = function_info->array[random_index];
         break;
     default:
         printf("Non-existing case!" );
+        exit(EXIT_FAILURE);
         break;
     }
 
@@ -58,22 +64,25 @@ static void quick_sort_reverse(int* array, int n){
     if(n <= 1){return;}
 
     int middle = (n - 1) / 2;
+
+    //Swap the 2 values
     int buff = *(array);
     *(array) = *(array + middle);
     *(array + middle) = buff;
+    
     quick_sort_reverse(array + 1, middle - 1);
     quick_sort_reverse((array + middle + 1), (n - middle - 1));
 }
 
 static void rig_array (function_call_info* function_info)
 {
-    if(function_info->case_type == worst_t || function_info->case_type == average_t)
+    if(function_info->case_type != best_t)
         return;
 
     switch (function_info->algorithm_type)
     {
     case linear_search_t :
-        (*function_info->array) = function_info->search_value;
+        *(function_info->array) = function_info->search_value;
         break;
     case binary_search_t :
         *(function_info->array + (function_info->size / 2)) = function_info->search_value;
@@ -93,31 +102,27 @@ static void select_algorithm(function_call_info* function_info)
     {
     case bubble_sort_t:
         function_info->sort_function_pointer = &bubble_sort;
-        function_info->algorithm_type = bubble_sort_t;
         function_info->is_search_algorithm = false;
         break;
     case insertion_sort_t:
         function_info->sort_function_pointer = &insertion_sort;
-        function_info->algorithm_type = insertion_sort_t;
         function_info->is_search_algorithm = false;
         break;
     case quick_sort_t:
         function_info->sort_function_pointer = &quick_sort;
-        function_info->algorithm_type = quick_sort_t;
         function_info->is_search_algorithm = false;
         break;
     case linear_search_t:
         function_info->search_function_pointer = &linear_search;
-        function_info->algorithm_type = linear_search_t;
         function_info->is_search_algorithm = true;
         break;
     case binary_search_t:
         function_info->search_function_pointer = &binary_search;
-        function_info->algorithm_type = binary_search_t;
         function_info->is_search_algorithm = true;
         break;
     default:
-        printf("Non-existing algorithm!");
+        perror("Non-existing algorithm!");
+        exit(EXIT_FAILURE);
         break;
     }
 }
@@ -125,6 +130,10 @@ static void select_algorithm(function_call_info* function_info)
 
 static void prepare_array(function_call_info* function_info){
     function_info->array = (int*)malloc(sizeof(int) * function_info->size);
+    if (function_info->array == NULL){
+        perror("Memory allocation failed, shutting down!");
+        exit(EXIT_FAILURE);
+    }
     create_array(function_info);
     //Rigging everytime, the times it is not needed will just be skipped in the switch case
     rig_array(function_info);
@@ -134,12 +143,14 @@ static void warmup(function_call_info* function_info){
     //Loading in the right caches for better timings
     for (int i  = 0; i < ITERATIONS; i++) {
         prepare_array(function_info);
-
+        bool buff;
         if (function_info->is_search_algorithm == true)
-            (*function_info->search_function_pointer)(function_info->array, function_info->size, function_info->search_value);
+            buff = (*function_info->search_function_pointer)(function_info->array, function_info->size, function_info->search_value);
         else
             (*function_info->sort_function_pointer)(function_info->array, function_info->size);
-
+        printf("%d ", function_info->search_value);
+        printf("%d ", buff);
+        free(function_info->array);
     }
 }
 
@@ -166,7 +177,7 @@ static double time_algorithm(function_call_info* function_info)
 
         free(function_info->array);
 
-        result += ((end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / NANO);
+        result += ((end.tv_sec - start.tv_sec) + ((end.tv_nsec - start.tv_nsec) / NANO));
     }
 
     return (result / ITERATIONS);
@@ -178,7 +189,7 @@ static double time_algorithm(function_call_info* function_info)
 void benchmark(const algorithm_t a, const case_t c, result_t *buf, int n)
 {
     function_call_info function_info;
-
+    srand(time(NULL));
     //Prepering the struct with the right values
     function_info.algorithm_type = a;
     function_info.case_type = c;
@@ -187,7 +198,7 @@ void benchmark(const algorithm_t a, const case_t c, result_t *buf, int n)
 
     for (size_t i = 0; i < n; i++)
     {
-        (buf+ i)->time = time_algorithm(&function_info);
+        (buf + i)->time = time_algorithm(&function_info);
         function_info.size *= 2;
     }
 }
