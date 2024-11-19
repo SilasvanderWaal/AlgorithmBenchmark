@@ -41,32 +41,29 @@ static int partition(int *a, int size)
 //
 // Public
 //
-void bubble_sort(int *a, int n)
-{
-    int buff;
-	for (size_t i = 0; i < n - 1; i++)
-	{
-	   for (size_t j = 0; j < n - i - 1; j++)
-		{
-			if(a[j] > a[j+1])
-			{
-			    buff = a[j];
-				a[j] = a[j+1];
-				a[j+1] = buff;
+void bubble_sort(int *a, int n){
+    bool swapped;
+	for (size_t i = 0; i < n - 1; i++){
+	   swapped = false;
+	   for (size_t j = 0; j < n - i - 1; j++){
+			if(a[j] > a[j+1]){
+			    swap((a + j),( a + j + 1));
+				swapped = true;
 			}
+		}
+
+		if(swapped == false){
+		  break;
 		}
 	}
 }
 
-void insertion_sort(int *a, int n)
-{
-    for (size_t i = 1; i < n; i++)
-    {
+void insertion_sort(int *a, int n){
+    for (size_t i = 1; i < n; i++){
         int index = i - 1;
         int compare_value = a[i];
 
-        while(index >= 0 && a[index] > compare_value)
-        {
+        while(index >= 0 && a[index] > compare_value){
             a[index+1] = a[index];
             index--;
         }
@@ -77,10 +74,8 @@ void insertion_sort(int *a, int n)
     return;
 }
 
-void quick_sort(int *a, int n)
-{
-    if(n > 1)
-    {
+void quick_sort(int *a, int n){
+    if(n > 1){
         int pivot_index = partition(a, n);
         quick_sort(a, pivot_index + 1); //Left side from zero to and with pivot
         quick_sort(a + pivot_index + 1, n - (pivot_index + 1)); //Right side from index after previous pivot
@@ -89,10 +84,8 @@ void quick_sort(int *a, int n)
     return;
 }
 
-bool linear_search(const int *a, int n, int v)
-{
-    for(int i = 0; i < n; i++)
-    {
+bool linear_search(const int *a, int n, int v){
+    for(int i = 0; i < n; i++){
         if(a[i] == v)
             return true;
     }
@@ -100,8 +93,7 @@ bool linear_search(const int *a, int n, int v)
 	return false;
 }
 
-bool binary_search(const int *a, int n, int v)
-{
+bool binary_search(const int *a, int n, int v){
     if(n == 0)
         return false;
 
