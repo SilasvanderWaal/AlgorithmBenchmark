@@ -30,8 +30,11 @@ static void sorted_ascending(function_call_info* function_info)
     }
 }
 
+
 static void create_array(function_call_info* function_info)
 {
+    int random_index;
+
     switch (function_info->case_type)
     {
     case best_t:
@@ -39,11 +42,15 @@ static void create_array(function_call_info* function_info)
         function_info->search_value = SEARCH_VALUE;
         break;
     case worst_t:
-        sorted_decending(function_info);
+        if(function_info->algorithm_type == binary_search_t)
+            sorted_ascending(function_info);
+        else
+            sorted_decending(function_info);
+
         function_info->search_value = -1;
         break;
     case average_t:
-        int random_index = rand() % function_info->size;
+        random_index = rand() % function_info->size;
 
         if(function_info->algorithm_type == binary_search_t)
             sorted_ascending(function_info);
@@ -69,7 +76,7 @@ static void quick_sort_reverse(int* array, int n){
     int buff = *(array);
     *(array) = *(array + middle);
     *(array + middle) = buff;
-    
+
     quick_sort_reverse(array + 1, middle - 1);
     quick_sort_reverse((array + middle + 1), (n - middle - 1));
 }
@@ -129,27 +136,28 @@ static void select_algorithm(function_call_info* function_info)
 
 
 static void prepare_array(function_call_info* function_info){
+    //Allocating memory
     function_info->array = (int*)malloc(sizeof(int) * function_info->size);
+    //Check so memory allocation worked
     if (function_info->array == NULL){
         perror("Memory allocation failed, shutting down!");
         exit(EXIT_FAILURE);
     }
+    //Creating the array
     create_array(function_info);
     //Rigging everytime, the times it is not needed will just be skipped in the switch case
     rig_array(function_info);
 }
 
+
 static void warmup(function_call_info* function_info){
     //Loading in the right caches for better timings
     for (int i  = 0; i < ITERATIONS; i++) {
         prepare_array(function_info);
-        bool buff;
         if (function_info->is_search_algorithm == true)
-            buff = (*function_info->search_function_pointer)(function_info->array, function_info->size, function_info->search_value);
+            (*function_info->search_function_pointer)(function_info->array, function_info->size, function_info->search_value);
         else
             (*function_info->sort_function_pointer)(function_info->array, function_info->size);
-        printf("%d ", function_info->search_value);
-        printf("%d ", buff);
         free(function_info->array);
     }
 }
@@ -177,10 +185,11 @@ static double time_algorithm(function_call_info* function_info)
 
         free(function_info->array);
 
-        result += ((end.tv_sec - start.tv_sec) + ((end.tv_nsec - start.tv_nsec) / NANO));
+       double start_ns = start.tv_sec  + ((double) start.tv_nsec / 1000000000L);
+       double stop_ns = end.tv_sec  + ((double) end.tv_nsec / 1000000000L);
+       result += ((stop_ns - start_ns));
     }
-
-    return (result / ITERATIONS);
+    return ((result / ITERATIONS));
 }
 
 //
@@ -199,6 +208,7 @@ void benchmark(const algorithm_t a, const case_t c, result_t *buf, int n)
     for (size_t i = 0; i < n; i++)
     {
         (buf + i)->time = time_algorithm(&function_info);
+        (buf + i)->size = function_info.size;
         function_info.size *= 2;
     }
 }

@@ -10,36 +10,79 @@
 //
 // Private
 //
-
-static void ui_print_results(result_t results[RESULT_ROWS], char menu_option[]){
-    int size = SIZE_START;
-
+static void ui_print_analysis_header(algorithm_t a){
     printf("\n");
-    for (int i = 0; i < MENU_WIDTH; i++) {
+    printf("%s \t", "size");
+    printf("%s \t", "Time T(s)");
+
+    switch (a) {
+        case quick_sort_t:
+        case bubble_sort_t:
+        case insertion_sort_t:
+            printf("%s\t\t", "T/n");
+            printf("%s\t", "T/n*log(n)");
+            printf("%s\n", "T/n²");
+            break;
+        case binary_search_t:
+        case linear_search_t:
+            printf("%s\t", "T/1");
+            printf("%s\t", "T/log(n)");
+            printf("%s\n", "T/n");
+            break;
+        default:
+            perror("Error occured when printing the results");
+            break;
+    }
+}
+
+static void ui_print_analysis(algorithm_t a, result_t results[]){
+    for (int i = 0; i < RESULT_ROWS; i++) {
+        int size = results[i].size;
+        double time_seconds = results[i].time;
+
+        switch (a) {
+            case quick_sort_t:
+            case bubble_sort_t:
+            case insertion_sort_t:
+                printf("%d\t", size);
+                printf("%.9f\t", time_seconds);
+                printf("%e\t", (time_seconds / size));
+                printf("%e\t", (time_seconds / (log2(size) * size)));
+                printf("%e\n", (time_seconds / pow(size, 2)));
+                break;
+            case binary_search_t:
+            case linear_search_t:
+                printf("%d\t", size);
+                printf("%.9lf\t", time_seconds);
+                printf("%e\t", (time_seconds / 1));
+                printf("%e\t", (time_seconds / (log2(size))));
+                printf("%e\n", (time_seconds / size));
+                break;
+            default:
+                perror("Error occured when printing the results");
+                break;
+        }
+    }
+}
+
+static void ui_print_results(result_t results[RESULT_ROWS], char menu_option[], algorithm_t a){
+    printf("\n");
+    for (int i = 0; i < RESULT_MENU_WIDTH; i++) {
         printf("*");
     }
+
     printf("\n");
 
-    printf ("%*s\n",(int) (MENU_WIDTH / 2 + strlen(menu_option) / 2), menu_option);
+    printf ("%*s\n",(int) (RESULT_MENU_WIDTH / 2 + strlen(menu_option) / 2), menu_option);
 
-    for (int i = 0; i < MENU_WIDTH; i++) {
+    for (int i = 0; i < RESULT_MENU_WIDTH; i++) {
         printf("-");
     }
 
-    printf("\n");
-    printf("%5s \t", "size");
-    printf("%10s \t", "time T(s)");
-    printf("%10s \t", "T/logn");
-    printf("%10s \t", "T/n");
-    printf("%10s \t\n", "T/nlog");
+    ui_print_analysis_header(a);
+    ui_print_analysis(a, results);
 
-    for (int i = 0; i < RESULT_ROWS; i++) {
-        double time_seconds = results[i].time;
-        printf("%5d \t %.9lf \t %9e \t %9e \t %9e\n", size, time_seconds, log2(size) , time_seconds / size , size * log2(size));
-        size *= 2;
-    }
-
-    for (int i = 0; i < MENU_WIDTH; i++) {
+    for (int i = 0; i < RESULT_MENU_WIDTH; i++) {
         printf("-");
     }
 
@@ -134,66 +177,66 @@ void ui_run()
 			// Bubble sort
 			case 'c':
 				benchmark(bubble_sort_t, best_t, result, RESULT_ROWS);
-				ui_print_results(result, "Bubble sort: Best case");
+				ui_print_results(result, "Bubble sort: Best case", bubble_sort_t);
 				break;
 			case 'd':
 				benchmark(bubble_sort_t, worst_t, result, RESULT_ROWS);
-				ui_print_results(result, "Bubble sort: Worst case");
+				ui_print_results(result, "Bubble sort: Worst case", bubble_sort_t);
 				break;
 
 			case 'e':
 				benchmark(bubble_sort_t, average_t, result, RESULT_ROWS);
-				ui_print_results(result, "Bubble sort: Average case");
+				ui_print_results(result, "Bubble sort: Average case", bubble_sort_t);
 				break;
 
 			case 'f':
 				benchmark(insertion_sort_t, best_t, result, RESULT_ROWS);
-				ui_print_results(result, "Insertion sort: Best case");
+				ui_print_results(result, "Insertion sort: Best case", insertion_sort_t);
 				break;
 
 			case 'g':
 				benchmark(insertion_sort_t, worst_t, result, RESULT_ROWS);
-				ui_print_results(result, "Insertion sort: Worst case");
+				ui_print_results(result, "Insertion sort: Worst case", insertion_sort_t);
 				break;
 			case 'h':
 				benchmark(insertion_sort_t, average_t, result, RESULT_ROWS);
-				ui_print_results(result, "Insertion sort: Average case");
+				ui_print_results(result, "Insertion sort: Average case", insertion_sort_t);
 				break;
 			case 'i':
 				benchmark(quick_sort_t, best_t, result, RESULT_ROWS);
-				ui_print_results(result, "Quick sort: Best case");
+				ui_print_results(result, "Quick sort: Best case", quick_sort_t);
 				break;
 			case 'j':
 				benchmark(quick_sort_t, worst_t, result, RESULT_ROWS);
-				ui_print_results(result, "Quick sort: Worst case");
+				ui_print_results(result, "Quick sort: Worst case", quick_sort_t);
 				break;
 			case 'k':
 				benchmark(quick_sort_t, average_t, result, RESULT_ROWS);
-				ui_print_results(result, "Quick sort: Average case");
+				ui_print_results(result, "Quick sort: Average case", quick_sort_t);
 				break;
 			case 'l':
 				benchmark(linear_search_t, best_t, result, RESULT_ROWS);
-				ui_print_results(result, "Linear search: Best case");
+				ui_print_results(result, "Linear search: Best case", linear_search_t);
 				break;
 			case 'm':
 				benchmark(linear_search_t, worst_t, result, RESULT_ROWS);
-				ui_print_results(result, "Linear search: Worst case");
+				ui_print_results(result, "Linear search: Worst case", linear_search_t);
 				break;
 			case 'n':
 				benchmark(linear_search_t, average_t, result, RESULT_ROWS);
-				ui_print_results(result, "Linear search: Average case");
+				ui_print_results(result, "Linear search: Average case", linear_search_t);
 				break;
 			case 'o':
 				benchmark(binary_search_t, best_t, result, RESULT_ROWS);
-				ui_print_results(result, "Binary search: Best case");
+				ui_print_results(result, "Binary search: Best case", binary_search_t);
 				break;
 			case 'p':
 				benchmark(binary_search_t, worst_t, result, RESULT_ROWS);
-				ui_print_results(result, "Binary search: Worst case");
+				ui_print_results(result, "Binary search: Worst case", binary_search_t);
 				break;
 			case 'q':
 				benchmark(binary_search_t, average_t, result, RESULT_ROWS);
-				ui_print_results(result, "Binary search: Average case");
+				ui_print_results(result, "Binary search: Average case", binary_search_t);
 				break;
 			// Invalid input
 			default:
