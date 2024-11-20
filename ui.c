@@ -25,7 +25,7 @@ static void ui_print_analysis_header(algorithm_t a){
             break;
         case binary_search_t:
         case linear_search_t:
-            printf("%s\t", "T/1");
+            printf("%s\t\t", "T/1");
             printf("%s\t", "T/log(n)");
             printf("%s\n", "T/n");
             break;
@@ -39,6 +39,7 @@ static void ui_print_analysis(algorithm_t a, result_t results[]){
     for (int i = 0; i < RESULT_ROWS; i++) {
         int size = results[i].size;
         double time_seconds = results[i].time;
+        double time_nano_seconds = results[i].time *NANO;
 
         switch (a) {
             case quick_sort_t:
@@ -46,17 +47,17 @@ static void ui_print_analysis(algorithm_t a, result_t results[]){
             case insertion_sort_t:
                 printf("%d\t", size);
                 printf("%.9f\t", time_seconds);
-                printf("%e\t", (time_seconds / size));
-                printf("%e\t", (time_seconds / (log2(size) * size)));
-                printf("%e\n", (time_seconds / pow(size, 2)));
+                printf("%e\t", (time_nano_seconds / size));
+                printf("%e\t", (time_nano_seconds / (log2(size) * size)));
+                printf("%e\n", (time_nano_seconds / pow(size, 2)));
                 break;
             case binary_search_t:
             case linear_search_t:
                 printf("%d\t", size);
                 printf("%.9lf\t", time_seconds);
-                printf("%e\t", (time_seconds / 1));
-                printf("%e\t", (time_seconds / (log2(size))));
-                printf("%e\n", (time_seconds / size));
+                printf("%e\t", (time_nano_seconds / 1));
+                printf("%e\t", (time_nano_seconds / (log2(size))));
+                printf("%e\n", (time_nano_seconds / size));
                 break;
             default:
                 perror("Error occured when printing the results");

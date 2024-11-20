@@ -2,7 +2,7 @@
 #define ANALYZE_H
 
 #define SIZE_START 512
-#define ITERATIONS 4
+#define ITERATIONS 7
 #define MAX_SIZE 16384
 #define SEARCH_VALUE 1337
 #define NANO 10E9
