@@ -5,6 +5,8 @@
 //
 // Private
 //
+
+//Swapping the values of the two memory adresses it recieves
 static void swap(int* value_1, int* value_2)
 {
     int temporary = *value_1;

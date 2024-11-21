@@ -10,12 +10,15 @@
 //
 // Private
 //
+
+//Function that prints out the time complexities for sort or search algorithms
 static void ui_print_analysis_header(algorithm_t a){
     printf("\n");
     printf("%s \t", "size");
     printf("%s \t", "Time T(s)");
 
     switch (a) {
+        //Cases when a sort algorithm is benchmarked
         case quick_sort_t:
         case bubble_sort_t:
         case insertion_sort_t:
@@ -23,6 +26,7 @@ static void ui_print_analysis_header(algorithm_t a){
             printf("%s\t", "T/n*log(n)");
             printf("%s\n", "T/n²");
             break;
+        //Cases when a search algorithm is bechmarked
         case binary_search_t:
         case linear_search_t:
             printf("%s\t\t", "T/1");
@@ -35,26 +39,28 @@ static void ui_print_analysis_header(algorithm_t a){
     }
 }
 
+//Function that prints out the time complexity results, these also depend on what algorithm we benchmark
 static void ui_print_analysis(algorithm_t a, result_t results[]){
     for (int i = 0; i < RESULT_ROWS; i++) {
         int size = results[i].size;
         double time_seconds = results[i].time;
         double time_nano_seconds = results[i].time *NANO;
 
+        printf("%d\t", size);
+        printf("%.9lf\t", time_seconds);
+
         switch (a) {
+            //The results that will be printed when we run a sorting algorithm
             case quick_sort_t:
             case bubble_sort_t:
             case insertion_sort_t:
-                printf("%d\t", size);
-                printf("%.9f\t", time_seconds);
                 printf("%e\t", (time_nano_seconds / size));
                 printf("%e\t", (time_nano_seconds / (log2(size) * size)));
                 printf("%e\n", (time_nano_seconds / pow(size, 2)));
                 break;
+            //The results that will be printed when we run a sorting algorithm
             case binary_search_t:
             case linear_search_t:
-                printf("%d\t", size);
-                printf("%.9lf\t", time_seconds);
                 printf("%e\t", (time_nano_seconds / 1));
                 printf("%e\t", (time_nano_seconds / (log2(size))));
                 printf("%e\n", (time_nano_seconds / size));
@@ -67,11 +73,9 @@ static void ui_print_analysis(algorithm_t a, result_t results[]){
 }
 
 static void ui_print_results(result_t results[RESULT_ROWS], char menu_option[], algorithm_t a){
-    printf("\n");
     for (int i = 0; i < RESULT_MENU_WIDTH; i++) {
         printf("*");
     }
-
     printf("\n");
 
     printf ("%*s\n",(int) (RESULT_MENU_WIDTH / 2 + strlen(menu_option) / 2), menu_option);
@@ -86,7 +90,6 @@ static void ui_print_results(result_t results[RESULT_ROWS], char menu_option[], 
     for (int i = 0; i < RESULT_MENU_WIDTH; i++) {
         printf("-");
     }
-
     printf("\n");
 }
 
@@ -175,7 +178,6 @@ void ui_run()
 			case 'b':
 				running = false;
 				break;
-			// Bubble sort
 			case 'c':
 				benchmark(bubble_sort_t, best_t, result, RESULT_ROWS);
 				ui_print_results(result, "Bubble sort: Best case", bubble_sort_t);
@@ -184,17 +186,14 @@ void ui_run()
 				benchmark(bubble_sort_t, worst_t, result, RESULT_ROWS);
 				ui_print_results(result, "Bubble sort: Worst case", bubble_sort_t);
 				break;
-
 			case 'e':
 				benchmark(bubble_sort_t, average_t, result, RESULT_ROWS);
 				ui_print_results(result, "Bubble sort: Average case", bubble_sort_t);
 				break;
-
 			case 'f':
 				benchmark(insertion_sort_t, best_t, result, RESULT_ROWS);
 				ui_print_results(result, "Insertion sort: Best case", insertion_sort_t);
 				break;
-
 			case 'g':
 				benchmark(insertion_sort_t, worst_t, result, RESULT_ROWS);
 				ui_print_results(result, "Insertion sort: Worst case", insertion_sort_t);
