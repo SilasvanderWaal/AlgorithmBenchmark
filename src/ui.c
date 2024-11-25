@@ -12,121 +12,52 @@
 // Private
 //
 
-static void ui_print_time_complexity_1(result_t* result){
-    printf("%s\t\t", "T/1");
-    printf("%s\t", "T/log(n)");
-    printf("%s\n", "T/n*log(n)");
-    for (size_t i = 0; i < RESULT_ROWS; i++) {
-        int size = result[i].size;
-        double time_nano_seconds = result[i].time * BILLION;
-        printf("%d\t", size);
-        printf("%.9lf\t", result[i].time);
-        printf("%e\t", (time_nano_seconds / 1));
-        printf("%e\t", (time_nano_seconds / (log2(size))));
-        printf("%e\n", (time_nano_seconds / size * (log2(size))));
-    }
+static void ui_line(char c, int n);
+
+static void ui_print_time_complexity(result_t* result, time_complexity_t accurate_complexity){
+	//Array for all the time complexity calculations
+	double time_complexity[TIME_COMPLEXITIES];
+
+	//Maping the time complexity headers to the right time complexity calculation
+	const char* time_complexity_headers[TIME_COMPLEXITIES] = {"T/1","T/log(n)","T/n","T/n*log(n)","T/n²","T/n³"};
+
+	//Making sure the value mapped to the time accurate complexity never becomes zero
+	accurate_complexity = (accurate_complexity == 0) ? accurate_complexity + 1 : accurate_complexity;
+	
+	//Printing out the headers
+    printf("|%-5s\t", "Size");
+    printf("|%-11s\t", "Time T(s)");
+	printf("|%-11s\t", time_complexity_headers[accurate_complexity- 1]);
+    printf("|%-11s\t", time_complexity_headers[accurate_complexity]);
+    printf("|%-11s\n", time_complexity_headers[accurate_complexity + 1]);
+	
+	//Looping over all the calculations for different sizes
+	for (size_t i = 0; i < RESULT_ROWS; i++)
+	{
+		int size = result[i].size;
+		double time = result[i].time;
+
+		time_complexity[one] = time / 1;
+		time_complexity[log_n] = time / log2(size);
+		time_complexity[n_log_n] = time / (log2(size) * size);
+		time_complexity[n] = time / size;
+		time_complexity[n2] = time / pow(size, 2);
+		time_complexity[n3] = time / pow(size, 3);
+
+        printf("|%-5d\t", size);
+        printf("|%.9lf\t", time);
+        printf("|%e\t", time_complexity[accurate_complexity - 1]);
+        printf("|%e\t", time_complexity[accurate_complexity]);
+        printf("|%e\n", time_complexity[accurate_complexity + 1]);
+	}
 }
 
-static void ui_print_time_complexity_n(result_t* result){
-    printf("%s\t", "T/n*log(n)");
-    printf("%s\t\t", "T/n");
-    printf("%s\n", "T/n²");
-    for (size_t i = 0; i < RESULT_ROWS; i++) {
-        int size = result[i].size;
-        double time_nano_seconds = result[i].time * BILLION;
-        printf("%d\t", size);
-        printf("%.9lf\t", result[i].time);
-        printf("%e\t", (time_nano_seconds / size * log2(size)));
-        printf("%e\t", (time_nano_seconds / size));
-        printf("%e\n", (time_nano_seconds / pow(size, 2)));
-    }
-}
-
-static void ui_print_time_complexity_nlogn(result_t* result){
-    printf("%s\t", "T/log(n)");
-    printf("%s\t", "T/n*log(n)");
-    printf("%s\n", "T/n");
-    for (size_t i = 0; i < RESULT_ROWS; i++) {
-        int size = result[i].size;
-        double time_nano_seconds = result[i].time * BILLION;
-        printf("%d\t", size);
-        printf("%.9lf\t", result[i].time);
-        printf("%e\t", (time_nano_seconds / log2(size)));
-        printf("%e\t", (time_nano_seconds / (size * log2(size))));
-        printf("%e\n", (time_nano_seconds / pow(size, 2) ));
-    }
-}
-
-static void ui_print_time_complexity_n_squared(result_t* result){
-    printf("%s\t", "T/n*log(n)");
-    printf("%s\t\t", "T/n²");
-    printf("%s\n", "T/n³");
-    for (size_t i = 0; i < RESULT_ROWS; i++) {
-        int size = result[i].size;
-        double time_nano_seconds = result[i].time * BILLION;
-        printf("%d\t", size);
-        printf("%.9lf\t", result[i].time);
-        printf("%e\t", (time_nano_seconds / size * log2(size)));
-        printf("%e\t", (time_nano_seconds / pow(size, 2)));
-        printf("%e\n", (time_nano_seconds / pow(size, 3)));
-    }
-}
-
-static void ui_print_time_complexity_logn(result_t* result){
-    printf("%s\t\t", "T/1");
-    printf("%s\t", "T/log(n)");
-    printf("%s\n", "T/n*log(n)");
-    for (size_t i = 0; i < RESULT_ROWS; i++) {
-        int size = result[i].size;
-        double time_nano_seconds = result[i].time * BILLION;
-        printf("%d\t", size);
-        printf("%.9lf\t", result[i].time);
-        printf("%e\t", (time_nano_seconds / 1));
-        printf("%e\t", (time_nano_seconds / log2(size)));
-        printf("%e\n", (time_nano_seconds / (log2(size) * size)));
-    }
-}
-
-static void ui_print_results(result_t results[RESULT_ROWS], char menu_option[], algorithm_t a, time_complexity_t tc){
-    for (int i = 0; i < RESULT_MENU_WIDTH; i++) {
-        printf("*");
-    }
-    printf("\n");
-
+static void ui_print_results(result_t results[RESULT_ROWS], char menu_option[], algorithm_t a, time_complexity_t accurate_time_complexity){
+	ui_line('*', RESULT_MENU_WIDTH);
     printf ("%*s\n",(int) (RESULT_MENU_WIDTH / 2 + strlen(menu_option) / 2), menu_option);
-
-    for (int i = 0; i < RESULT_MENU_WIDTH; i++) {
-        printf("-");
-    }
-    printf("\n");
-
-    printf("%s\t", "Size");
-    printf("%s\t", "Time T(s)");
-    switch (tc) {
-        case one:
-            ui_print_time_complexity_1(results);
-            break;
-        case log_n:
-            ui_print_time_complexity_logn(results);
-            break;
-        case n_log_n:
-            ui_print_time_complexity_nlogn(results);
-            break;
-        case n:
-            ui_print_time_complexity_n(results);
-            break;
-        case n2:
-            ui_print_time_complexity_n_squared(results);
-            break;
-        default:
-            perror("Something went wrong!");
-            exit(EXIT_FAILURE);
-    }
-
-    for (int i = 0; i < RESULT_MENU_WIDTH; i++) {
-        printf("-");
-    }
-    printf("\n");
+	ui_line('-', RESULT_MENU_WIDTH);
+	ui_print_time_complexity(results, accurate_time_complexity);
+	ui_line('-', RESULT_MENU_WIDTH);
 }
 
 static void ui_invalid_input()

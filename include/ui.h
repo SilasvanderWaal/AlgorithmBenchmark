@@ -12,12 +12,12 @@ void ui_run();
 
 //time_complexity_t defines different time complexities
 typedef enum{
-    one,
-    log_n,
-    n,
-    n_log_n,
-    n2,
-    n3
+    one = 0,
+    log_n = 1,
+    n = 2,
+    n_log_n = 3,
+    n2 = 4,
+    n3 = 5
 }time_complexity_t;
 
 #endif
