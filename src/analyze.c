@@ -1,5 +1,5 @@
-#include "analyze.h"
-#include "algorithm.h"
+#include "../include/analyze.h"
+#include "../include/algorithm.h"
 #include <bits/time.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -152,7 +152,7 @@ static void prepare_array(function_call_info* function_info){
 
 //Loading in the right caches for better timings, this is done be running the algorithms without timing them
 static void warmup(function_call_info* function_info){
-    for (int i  = 0; i < ITERATIONS; i++) {
+    for (int i  = 0; i < WARMUP_ITERATIONS; i++) {
         prepare_array(function_info);
         if (function_info->is_search_algorithm == true)
             (*function_info->search_function_pointer)(function_info->array, function_info->size, function_info->search_value);

@@ -1,31 +1,45 @@
 .PHONY: clean tidy
 
+# Compiler and flags
 CC=gcc
 CFLAGS=-Wall -Werror -std=gnu99 -g
 LFLAGS=-lm
-HDR=$(wildcard *.h)
-SRC=$(filter-out $(wildcard *_test.c), $(wildcard *.c))
-OBJ=$(SRC:.c=.o)
 
+# Directories
+BUILD_DIR=./build/
+SRC_DIR=./src/
+
+# Source and header files
+HDR=$(wildcard $(SRC_DIR)*.h)
+SRC=$(filter-out $(SRC_DIR)*_test.c, $(wildcard $(SRC_DIR)*.c))
+OBJ=$(patsubst $(SRC_DIR)%.c,$(BUILD_DIR)%.o,$(SRC))
+
+# Test flags and files
 CFLAGS_TEST=$(CFLAGS)
 LFLAGS_TEST=$(LFLAGS) -lcheck -lm -lpthread -lrt -lsubunit
-SRC_TEST=$(filter-out main.c, $(wildcard *.c))
-OBJ_TEST=$(SRC_TEST:.c=.o)
+SRC_TEST=$(wildcard $(SRC_DIR)*_test.c)
+OBJ_TEST=$(patsubst $(SRC_DIR)%.c,$(BUILD_DIR)%.o,$(SRC_TEST))
 
+# Default target
+all: main
+
+# Main executable
 main: $(OBJ)
-	$(CC) $(CFLAGS) -o main $(OBJ) $(LFLAGS)
+	$(CC) $(CFLAGS) -o $(BUILD_DIR)main $(OBJ) $(LFLAGS)
 
+# Test executable
 test: $(OBJ_TEST)
-	$(CC) $(CFLAGS_TEST) -o test $(OBJ_TEST) $(LFLAGS_TEST)
+	$(CC) $(CFLAGS_TEST) -o $(BUILD_DIR)test $(OBJ_TEST) $(LFLAGS_TEST)
 
-%.o: %.c
-	$(CC) -c $(CFLAGS) -o $@ $< $(LFLAGS)
+# Rule for building object files
+$(BUILD_DIR)%.o: $(SRC_DIR)%.c $(HDR)
+	mkdir -p $(BUILD_DIR)
+	$(CC) -c $(CFLAGS) -o $@ $<
 
-%_test.o: %_test.c
-	$(CC) -c $(CFLAGS_TEST) -o $@ $< $(LFLAGS_TEST)
-
+# Clean up all generated files
 clean:
-	rm -rf *.o main test
+	rm -rf $(BUILD_DIR)
 
+# Tidy intermediate files
 tidy:
-	rm -rf *.o
+	rm -rf $(BUILD_DIR)*.o

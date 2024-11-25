@@ -2,10 +2,11 @@
 #define ANALYZE_H
 
 #define SIZE_START 512
-#define ITERATIONS 7
+#define ITERATIONS 10
+#define WARMUP_ITERATIONS 2
 #define MAX_SIZE 16384
 #define SEARCH_VALUE 1337
-#define NANO 10E9
+#define BILLION 10E9
 
 #include <stdbool.h>
 
@@ -31,6 +32,7 @@ typedef struct {
 	double time;
 } result_t;
 
+//Struct that cointains all information about the requested algorithm and case.
 typedef struct{
     void (*sort_function_pointer)(int*, int);
     bool (*search_function_pointer)(const int*, int, int);
