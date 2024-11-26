@@ -167,9 +167,9 @@ static double time_algorithm(function_call_info* function_info){
     struct timespec start, end;
     double result = 0;
 
-    warmup(function_info);
-
     for (size_t i = 0; i < ITERATIONS; i++){
+        warmup(function_info);
+
         prepare_array(function_info);   //Prepare a new array before each timing
 
         //Call the function we are pointing to. Also measure the time it takes.
